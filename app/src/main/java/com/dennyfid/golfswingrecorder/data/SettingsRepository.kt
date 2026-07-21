@@ -25,4 +25,8 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
     suspend fun setMotionThreshold(threshold: Double) {
         context.dataStore.edit { it[MOTION_THRESHOLD] = threshold }
     }
+
+    suspend fun setPreRollSec(seconds: Int) {
+        context.dataStore.edit { it[PRE_ROLL_SEC] = seconds }
+    }
 }
