@@ -1,0 +1,479 @@
+
+
+
+write instructions to create a golf swing recorder app for my pixel6 using android studio that will record my swing with the phone leaned against a tee marker about 6' from my body and start and stop automatically and store the the changes in a newly created but empty github repositoryDennyFid/GolfSwingRecorder. The local folder is c:\GIT\GolfSwingRecorder
+
+Below is a project specification you can use as the basis for building the app in Android Studio with AI assistance (or give to another developer). It is written as a detailed design document.
+
+Golf Swing Recorder
+Platform: Android (Pixel 6)
+Language: Kotlin
+IDE: Android Studio (latest stable)
+Minimum SDK: Android 12 (API 31)
+Target SDK: Latest available
+
+GitHub Repository
+Remote Repository
+
+https://github.com/DennyFid/GolfSwingRecorder
+
+Local Repository
+
+C:\GIT\GolfSwingRecorder
+
+The repository already exists but is empty.
+
+The Android Studio project should be created directly in
+
+C:\GIT\GolfSwingRecorder
+Initialize normally, commit after each major milestone, and push to GitHub.
+
+Goal
+Create an Android application that automatically records a golf swing without requiring the golfer to touch the phone after setup.
+
+The phone will:
+
+lean against a tee marker
+
+approximately six feet from and in front of  the golfer
+
+record landscape video
+
+automatically begin recording when the golfer starts the swing
+
+automatically stop after the follow-through
+
+save the clip
+
+immediately be ready for the next swing
+
+The app should work completely offline.
+
+Functional Requirements
+Camera
+Use CameraX.
+
+Requirements:
+
+Landscape orientation only
+
+Rear camera
+
+1080p at 60 fps when supported
+
+Otherwise use highest available frame rate
+
+Continuous autofocus
+
+Lock exposure after focusing
+
+Keep screen awake
+
+Setup Screen
+Display:
+
+Large live camera preview.
+
+Buttons:
+
+Start Session
+
+Settings
+
+Review Videos
+
+Overlay guides:
+
+golfer position
+
+club head area
+
+recommended phone distance
+
+Automatic Swing Detection
+The golfer presses Start Session.
+
+The app enters standby.
+
+No recording occurs yet.
+
+Instead:
+
+Continuously analyze preview frames.
+
+When motion exceeds threshold:
+
+Start recording automatically.
+
+No user interaction required.
+
+Detect Beginning of Swing
+Monitor frame-to-frame motion.
+
+Ignore:
+
+leaves
+
+flags
+
+clouds
+
+tiny camera shake
+
+Trigger only when a large moving object begins moving.
+
+Primary detection region:
+
+Middle third of image.
+
+Requirements:
+
+Motion persists
+
+at least
+
+200 milliseconds
+
+before triggering.
+
+Recording
+When swing detected:
+
+Immediately begin recording.
+
+Also include
+
+1 second of pre-roll.
+
+Implement using a rolling circular video buffer.
+
+Continue recording.
+
+Detect End of Swing
+Recording ends automatically after:
+
+No significant motion for
+
+2 seconds.
+
+OR
+
+Maximum recording time
+
+10 seconds.
+
+Video Storage
+Store videos under
+
+Movies/GolfSwingRecorder/
+Filename format:
+
+yyyy-MM-dd_HH-mm-ss.mp4
+Example
+
+2026-07-21_14-33-05.mp4
+Review Screen
+Display:
+
+Scrollable thumbnails.
+
+Selecting a video opens:
+
+Android video player.
+
+Long press:
+
+Delete.
+
+Motion Detection
+Do NOT use machine learning initially.
+
+Use OpenCV.
+
+Algorithm:
+
+Convert frame
+
+to grayscale.
+
+Blur.
+
+Subtract previous frame.
+
+Threshold.
+
+Dilate.
+
+Count changed pixels.
+
+Motion score.
+
+Only trigger when
+
+Motion Score >
+
+adjustable threshold.
+
+Ignore tiny motion.
+
+Adjustable Settings
+Allow user to configure:
+
+Motion threshold
+
+Pre-roll duration
+
+Maximum clip length
+
+Post-motion delay
+
+Video resolution
+
+FPS
+
+Save location
+
+Show motion debug overlay
+
+Persist settings using
+
+DataStore.
+
+User Interface
+Simple.
+
+Large buttons.
+
+Outdoor readable.
+
+Dark theme.
+
+Minimal text.
+
+Main screen:
+
+--------------------------------
+
+Camera Preview
+
+[ Start Session ]
+
+Status:
+
+READY
+
+--------------------------------
+When waiting:
+
+Status:
+
+Waiting for Swing...
+Recording:
+
+● Recording
+Saving:
+
+Saving...
+Ready again:
+
+Waiting for Swing...
+Performance
+Must maintain
+
+60 fps preview.
+
+Motion detection should run on a background coroutine.
+
+Never block UI thread.
+
+Architecture
+MVVM
+
+Components:
+
+MainActivity
+
+CameraManager
+
+MotionDetector
+
+VideoRecorder
+
+SettingsRepository
+
+GalleryFragment
+
+ViewModels
+
+Use:
+
+StateFlow
+
+Coroutines
+
+Lifecycle-aware components
+
+Dependency Injection with Hilt.
+
+Libraries
+CameraX
+
+CameraX Video
+
+OpenCV Android
+
+DataStore
+
+Navigation Component
+
+Material3
+
+Lifecycle
+
+ViewModel
+
+Coroutines
+
+Coil
+
+Permissions
+Camera
+
+Microphone
+
+Storage (only where required)
+
+Handle Android 13+
+
+photo/video permissions correctly.
+
+Future Enhancements
+Leave extension points for:
+
+AI swing detection
+
+Club tracking
+
+Slow motion playback
+
+Frame stepping
+
+Drawing swing plane
+
+Shot history
+
+Cloud backup
+
+Bluetooth remote
+
+Voice commands
+
+Wear OS integration
+
+Launch monitor integration
+
+Automatic ball detection
+
+Shot statistics
+
+Multiple camera support
+
+Git Workflow
+After project creation:
+
+Commit
+
+Initial Android Studio project
+Push.
+
+After Camera Preview:
+
+Commit
+
+CameraX preview working
+Push.
+
+After Motion Detection:
+
+Commit
+
+Automatic swing detection
+Push.
+
+After Video Recording:
+
+Commit
+
+Automatic recording implemented
+Push.
+
+After Gallery:
+
+Commit
+
+Gallery completed
+Push.
+
+After Settings:
+
+Commit
+
+Settings completed
+Push.
+
+After polishing:
+
+Commit
+
+Version 1.0 complete
+Push.
+
+Code Quality
+Requirements:
+
+Fully documented Kotlin code
+
+No deprecated Android APIs
+
+Kotlin idiomatic style
+
+Modular architecture
+
+Avoid duplicated code
+
+Unit tests for motion detection logic
+
+Handle activity recreation cleanly
+
+Gracefully recover from camera interruption
+
+Log important events with Logcat tags
+
+Success Criteria
+The finished application should allow a golfer to:
+
+Lean the Pixel 6 against a tee marker approximately 6 feet behind them.
+
+Press Start Session once.
+
+Address the ball.
+
+Begin the swing.
+
+Have recording start automatically.
+
+Capture the complete swing with about 1 second of pre-roll.
+
+Stop recording automatically after the follow-through.
+
+Save the video without user interaction.
+
+Return immediately to waiting mode for the next shot.
+
+This creates a hands-free workflow suitable for repeated practice swings with minimal interruption.
+
+
+
+
+Ad
+
