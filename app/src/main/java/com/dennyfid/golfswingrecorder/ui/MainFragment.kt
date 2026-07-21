@@ -17,6 +17,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
+import androidx.navigation.fragment.findNavController
+
 @AndroidEntryPoint
 class MainFragment : Fragment(R.layout.fragment_main) {
 
@@ -46,6 +48,10 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
         binding.btnStartSession.setOnClickListener {
             viewModel.startSession()
+        }
+
+        binding.btnReviewVideos.setOnClickListener {
+            findNavController().navigate(R.id.action_mainFragment_to_galleryFragment)
         }
 
         lifecycleScope.launchWhenStarted {
