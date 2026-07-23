@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import org.opencv.android.Utils
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
+import org.opencv.geometry.Geometry
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -42,7 +43,7 @@ class MotionDetector @Inject constructor() {
 
         var maxArea = 0.0
         for (contour in contours) {
-            val area = Imgproc.contourArea(contour)
+            val area = Geometry.contourArea(contour)
             if (area > maxArea) {
                 maxArea = area
             }

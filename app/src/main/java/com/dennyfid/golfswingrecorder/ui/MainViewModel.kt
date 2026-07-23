@@ -31,6 +31,10 @@ class MainViewModel @Inject constructor(
     private var swingThreshold = 5000.0
     private var preRollSec = 1
 
+    private val MOTION_PERSIST_MS = 200L
+    private val NO_MOTION_STOP_MS = 2000L
+    private val MAX_RECORD_MS = 10000L
+
     init {
         viewModelScope.launch {
             settingsRepository.motionThreshold.collect {
@@ -70,12 +74,18 @@ class MainViewModel @Inject constructor(
     fun onMotionDetected(score: Double) {
         val currentTime = System.currentTimeMillis()
 
+        if (score > 100) { // Log minor motion to see activity
+            Log.v("Motion", "Motion Score: $score (Threshold: $swingThreshold)")
+        }
+
         when (_uiState.value) {
             UiState.Waiting -> {
-                if (score > SWING_THRESHOLD) {
+                if (score > swingThreshold) {
                     if (motionStartTime == 0L) {
                         motionStartTime = currentTime
+                        Log.d("Motion", "Motion started...")
                     } else if (currentTime - motionStartTime >= MOTION_PERSIST_MS) {
+                        Log.i("Motion", "Motion persistent for ${MOTION_PERSIST_MS}ms. STARTING RECORDING.")
                         startRecording()
                     }
                 } else {
@@ -83,9 +93,10 @@ class MainViewModel @Inject constructor(
                 }
             }
             UiState.Recording -> {
-                if (score > SWING_THRESHOLD) {
+                if (score > swingThreshold) {
                     lastMotionTime = currentTime
                 } else if (currentTime - lastMotionTime >= NO_MOTION_STOP_MS) {
+                    Log.i("Motion", "No motion for ${NO_MOTION_STOP_MS}ms. STOPPING RECORDING.")
                     stopRecording()
                 }
             }
@@ -101,6 +112,8 @@ class MainViewModel @Inject constructor(
             if (event is VideoRecordEvent.Finalize) {
                 if (event.hasError()) {
                     Log.e("MainViewModel", "Recording error: ${event.error}")
+                } else {
+                    Log.i("MainViewModel", "Recording saved: ${event.outputResults.outputUri}")
                 }
                 _uiState.value = UiState.Waiting
             }

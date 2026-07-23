@@ -27,6 +27,7 @@ class CameraManager @Inject constructor(
     @ApplicationContext private val context: Context,
     private val motionDetector: MotionDetector
 ) {
+    private var cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
     private var videoCapture: VideoCapture<Recorder>? = null
     private var recording: Recording? = null
     private val cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
@@ -42,7 +43,6 @@ class CameraManager @Inject constructor(
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
             val preview = Preview.Builder()
-                .setTargetRotation(surfaceProvider.hashCode()) // Placeholder for rotation
                 .build().also {
                     it.setSurfaceProvider(surfaceProvider)
                 }
@@ -70,8 +70,6 @@ class CameraManager @Inject constructor(
                 }
             }
 
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
             try {
                 cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(
@@ -82,6 +80,19 @@ class CameraManager @Inject constructor(
             }
 
         }, ContextCompat.getMainExecutor(context))
+    }
+
+    fun toggleCamera(
+        lifecycleOwner: LifecycleOwner,
+        surfaceProvider: Preview.SurfaceProvider,
+        onMotionDetected: (Double) -> Unit
+    ) {
+        cameraSelector = if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
+            CameraSelector.DEFAULT_FRONT_CAMERA
+        } else {
+            CameraSelector.DEFAULT_BACK_CAMERA
+        }
+        startCamera(lifecycleOwner, surfaceProvider, onMotionDetected)
     }
 
     fun startRecording(onEvent: (VideoRecordEvent) -> Unit) {

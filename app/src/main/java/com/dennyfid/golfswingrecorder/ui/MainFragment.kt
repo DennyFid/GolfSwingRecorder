@@ -58,6 +58,14 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             findNavController().navigate(R.id.action_mainFragment_to_settingsFragment)
         }
 
+        binding.btnSwitchCamera.setOnClickListener {
+            cameraManager.toggleCamera(
+                viewLifecycleOwner,
+                binding.previewView.surfaceProvider,
+                viewModel::onMotionDetected
+            )
+        }
+
         lifecycleScope.launchWhenStarted {
             viewModel.uiState.collectLatest { state ->
                 updateUi(state)
@@ -90,16 +98,20 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             MainViewModel.UiState.Idle -> {
                 binding.statusText.text = "Status: READY"
                 binding.btnStartSession.text = "Start Session"
+                binding.recordingFrame.visibility = View.GONE
             }
             MainViewModel.UiState.Waiting -> {
                 binding.statusText.text = "Waiting for Swing..."
                 binding.btnStartSession.text = "Stop Session"
+                binding.recordingFrame.visibility = View.GONE
             }
             MainViewModel.UiState.Recording -> {
                 binding.statusText.text = "● Recording"
+                binding.recordingFrame.visibility = View.VISIBLE
             }
             MainViewModel.UiState.Saving -> {
                 binding.statusText.text = "Saving..."
+                binding.recordingFrame.visibility = View.GONE
             }
         }
     }

@@ -16,6 +16,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
+        android:id="@+id/recordingFrame"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_golf_frame"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/previewView"
+        app:layout_constraintEnd_toEndOf="@+id/previewView"
+        app:layout_constraintStart_toStartOf="@+id/previewView"
+        app:layout_constraintTop_toTopOf="@+id/previewView" />
+
+    <View
         android:id="@+id/overlay_guides"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -67,6 +78,17 @@
         android:src="@android:drawable/ic_menu_preferences"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@android:color/white" />
+
+    <ImageButton
+        android:id="@+id/btnSwitchCamera"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_menu_camera"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:tint="@android:color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,7 +9,12 @@ import coil.load
 import com.dennyfid.golfswingrecorder.data.VideoItem
 import com.dennyfid.golfswingrecorder.databinding.ItemVideoBinding
 
-class GalleryAdapter(private val onVideoClick: (VideoItem) -> Unit) :
+class GalleryAdapter(
+    private val onVideoClick: (VideoItem) -> Unit,
+    private val onVideoDelete: (VideoItem) -> Unit,
+    private val onVideoShare: (VideoItem) -> Unit,
+    private val onVideoAnalyze: (VideoItem) -> Unit
+) :
     ListAdapter<VideoItem, GalleryAdapter.VideoViewHolder>(VideoDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
@@ -26,8 +31,21 @@ class GalleryAdapter(private val onVideoClick: (VideoItem) -> Unit) :
         fun bind(item: VideoItem) {
             binding.thumbnail.load(item.uri) {
                 crossfade(true)
+                // Ensure video frame decoder is used if possible
+                placeholder(android.R.drawable.progress_indeterminate_horizontal)
+                error(android.R.drawable.ic_dialog_alert)
             }
             binding.root.setOnClickListener { onVideoClick(item) }
+            binding.btnDelete.setOnClickListener { 
+                android.util.Log.d("GalleryAdapter", "Delete clicked for ${item.uri}")
+                onVideoDelete(item) 
+            }
+            binding.btnShare.setOnClickListener {
+                onVideoShare(item)
+            }
+            binding.btnAnalyze.setOnClickListener {
+                onVideoAnalyze(item)
+            }
         }
     }
 

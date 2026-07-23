@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
+    id("org.jetbrains.kotlin.kapt")
     id("com.google.dagger.hilt.android")
 }
 
@@ -22,6 +22,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("debug")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -35,6 +36,12 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = false
+        }
+    }
 }
 
 dependencies {
@@ -46,7 +53,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-
+    implementation(project(":opencv"))
     // CameraX
     implementation("androidx.camera:camera-core:$cameraxVersion")
     implementation("androidx.camera:camera-camera2:$cameraxVersion")
@@ -73,6 +80,7 @@ dependencies {
 
     // Coil
     implementation("io.coil-kt:coil:2.5.0")
+    implementation("io.coil-kt:coil-video:2.5.0")
 
     // OpenCV (Note: Usually needs manual setup, but for now we'll assume a local library or stub)
     // implementation(project(":opencv")) 
